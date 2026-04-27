@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teammate Finder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            margin-top: 20px;
+        }
+        
+        .user-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .user-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .similarity {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .stats {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .example-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .example-btn:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Teammate Finder</h1>
+            <p>Найди идеальных тиммейтов по стилю игры</p>
+        </div>
+        
+        <div class="content">
+            <!-- Левая колонка - Добавление пользователя -->
+            <div class="section">
+                <h3>➕ Добавить профиль</h3>
+                <div class="form-group">
+                    <label for="user_id">ID пользователя:</label>
+                    <input type="text" id="user_id" placeholder="player123">
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Имя пользователя:</label>
+                    <input type="text" id="username" placeholder="CoolPlayer">
+                </div>
+                
+                <div class="form-group">
+                    <label for="game_type">Тип игры:</label>
+                    <select id="game_type">
+                        <option value="dota2">Dota 2</option>
+                        <option value="csgo">CS:GO</option>
+                        <option value="lol">League of Legends</option>
+                        <option value="valorant">Valorant</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Описание стиля игры:</label>
+                    <textarea id="description" placeholder="Опишите ваш стиль игры, предпочтения, сильные стороны..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="addUser()">➕ Добавить профиль</button>
+                
+                <div class="stats" id="stats">
+                    <strong>📊 Статистика системы:</strong><br>
+                    Загрузка...
+                </div>
+            </div>
+            
+            <!-- Правая колонка - Поиск -->
+            <div class="section">
+                <h3>🔍 Поиск тиммейтов</h3>
+                
+                <div class="form-group">
+                    <label for="search_description">Опишите желаемого тиммейта:</label>
+                    <textarea id="search_description" placeholder="Например: Ищу агрессивного игрока для атаки..."></textarea>
+                    <div style="margin-top: 10px;">
+                        <strong>Примеры:</strong><br>
+                        <button class="example-btn" onclick="setExample(0)">Агрессивный</button>
+                        <button class="example-btn" onclick="setExample(1)">Саппорт</button>
+                        <button class="example-btn" onclick="setExample(2)">Стратег</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="top_k">Количество результатов: <span id="top_k_value">5</span></label>
+                    <input type="range" id="top_k" min="1" max="10" value="5" oninput="document.getElementById('top_k_value').textContent = this.value">
+                </div>
+                
+                <button class="btn" onclick="searchTeammates()">🔍 Найти тиммейтов</button>
+                
+                <div class="results" id="results">
+                    <!-- Здесь появятся результаты поиска -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        const examples = [
+            "Ищу агрессивного игрока для атаки и давления на врага",
+            "Нужен спокойный саппорт для помощи команде и контроля карты", 
+            "Ищу стратегического игрока для тактической игры и анализа"
+        ];
+        
+        // Загружаем статистику при запуске
+        loadStats();
+        
+        function setExample(index) {
+            document.getElementById('search_description').value = examples[index];
+        }
+        
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const stats = await response.json();
+                document.getElementById('stats').innerHTML = `
+                    <strong>📊 Статистика системы:</strong><br>
+                    👥 Пользователей: ${stats.total_users}<br>
+                    ${Object.entries(stats.users_by_game_type || {}).map(([game, count]) => 
+                        `🎮 ${game}: ${count}`).join('<br>')}
+                `;
+            } catch (error) {
+                document.getElementById('stats').innerHTML = '❌ Ошибка загрузки статистики';
+            }
+        }
+        
+        async function addUser() {
+            const userData = {
+                user_id: document.getElementById('user_id').value,
+                username: document.getElementById('username').value,
+                description: document.getElementById('description').value,
+                game_type: document.getElementById('game_type').value
+            };
+            
+            if (!userData.user_id || !userData.description) {
+                alert('⚠️ Заполните обязательные поля: ID пользователя и описание');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/users`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(userData)
+                });
+                
+                if (response.ok) {
+                    alert('✅ Пользователь успешно добавлен!');
+                    // Очищаем форму
+                    document.getElementById('user_id').value = '';
+                    document.getElementById('username').value = '';
+                    document.getElementById('description').value = '';
+                    // Обновляем статистику
+                    loadStats();
+                } else {
+                    const error = await response.json();
+                    alert(`❌ Ошибка: ${error.detail}`);
+                }
+            } catch (error) {
+                alert('❌ Ошибка соединения с сервером');
+            }
+        }
+        
+        async function searchTeammates() {
+            const searchData = {
+                description: document.getElementById('search_description').value,
+                top_k: parseInt(document.getElementById('top_k').value)
+            };
+            
+            if (!searchData.description) {
+                alert('⚠️ Введите описание для поиска');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">⏳ Ищем тиммейтов...</div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/similarity/search`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(searchData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Ошибка сервера');
+                }
+                
+                const users = await response.json();
+                displayResults(users);
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ Ошибка поиска: ${error.message}</div>`;
+            }
+        }
+        
+        function displayResults(users) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (users.length === 0) {
+                resultsDiv.innerHTML = '<div class="error">😞 Тиммейты не найдены. Попробуйте изменить описание.</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = `
+                <h4>🎯 Найдено тиммейтов: ${users.length}</h4>
+                ${users.map(user => `
+                    <div class="user-card">
+                        <h4>${user.username || 'Анонимный игрок'}</h4>
+                        <p><strong>ID:</strong> ${user.user_id}</p>
+                        <p><strong>Описание:</strong> "${user.description}"</p>
+                        <p><strong>Игра:</strong> ${user.game_type}</p>
+                        <span class="similarity">Совпадение: ${(user.similarity_score * 100).toFixed(1)}%</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+    </script>
+</body>
+</html>

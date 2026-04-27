@@ -1,0 +1,36 @@
+# Базовые пакеты
+setuptools
+wheel
+
+# Веб-фреймворки
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Валидация данных
+pydantic
+
+# Машинное обучение (без жестких версий)
+torch
+numpy
+scikit-learn
+pandas
+
+# Sentence Transformers (совместимые версии)
+sentence-transformers
+transformers
+
+# Обработка естественного языка
+nltk
+pymorphy2
+pymorphy2-dicts-ru
+regex
+
+# Утилиты
+python-dotenv
+tqdm
+requests
+httpx
+
+# Для тестирования
+pytest
