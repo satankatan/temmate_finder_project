@@ -10,18 +10,13 @@ python-multipart
 # Валидация данных
 pydantic
 
-# Машинное обучение (без жестких версий)
+# Машинное обучение
 torch
 numpy
 scikit-learn
 pandas
 
-# Sentence Transformers (совместимые версии)
-sentence-transformers
-transformers
-
 # Обработка естественного языка
-nltk
 pymorphy2
 pymorphy2-dicts-ru
 regex
@@ -34,3 +29,8 @@ httpx
 
 # Для тестирования
 pytest
+
+# Опционально: графики и сравнение (scripts/evaluate_custom_model.py, sravnenie.py)
+matplotlib
+seaborn
+# sentence-transformers

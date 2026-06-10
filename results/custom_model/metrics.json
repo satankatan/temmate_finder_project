@@ -1,0 +1,23 @@
+{
+  "precision": 0.8571428571428571,
+  "ndcg": 0.9712987640488927,
+  "correlation": 0.2694498866088682,
+  "mae": 0.3882443489811637,
+  "rmse": 0.5205324647035546,
+  "pred_threshold": 0.5,
+  "actual_threshold": 0.7,
+  "pairs_count": 11,
+  "optimal_pred_threshold": 0.9500000000000001,
+  "optimal_precision": 1.0,
+  "model": "Custom LSTM+Attention",
+  "model_info": {
+    "type": "custom_lstm_attention",
+    "architecture": "Embedding + BiLSTM + Attention + FC",
+    "trained_on": "gaming slang compatibility dataset",
+    "embedding_dim": 128,
+    "model_loaded": true,
+    "vocab_size": 206
+  },
+  "eval_file": "C:\\Users\\User\\Desktop\\temmate_finder_project\\data\\test.csv",
+  "eval_split": "hold-out test (модель не видела эти пары при обучении)"
+}

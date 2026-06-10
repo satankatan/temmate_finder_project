@@ -79,6 +79,7 @@ class SQLiteVectorDB:
 
     def find_similar_users(self, query_embedding: List[float], 
                           user_id: Optional[str] = None,
+                          game_type: Optional[str] = None,
                           top_k: int = 5,
                           similarity_threshold: float = 0.5) -> List[Dict[str, Any]]:
 
@@ -86,11 +87,18 @@ class SQLiteVectorDB:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 
-                # Получаем всех пользователей
+                query = "SELECT user_id, username, description, embedding, game_type FROM users WHERE 1=1"
+                params: List[Any] = []
+
                 if user_id:
-                    cursor.execute("SELECT user_id, username, description, embedding, game_type FROM users WHERE user_id != ?", (user_id,))
-                else:
-                    cursor.execute("SELECT user_id, username, description, embedding, game_type FROM users")
+                    query += " AND user_id != ?"
+                    params.append(user_id)
+
+                if game_type and game_type != "all":
+                    query += " AND game_type = ?"
+                    params.append(game_type)
+
+                cursor.execute(query, params)
                 
                 all_users = cursor.fetchall()
                 

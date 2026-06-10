@@ -3,380 +3,633 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teammate Finder</title>
+    <title>Teammate Finder — семантический матчмейкинг</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #0b0f1a;
+            --surface: #121829;
+            --surface-2: #1a2236;
+            --border: #2a3550;
+            --text: #e8edf7;
+            --muted: #8b97b3;
+            --accent: #6c5ce7;
+            --accent-2: #00cec9;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #ff7675;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
         }
-        
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top, #1a1f35 0%, var(--bg) 55%);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
+            line-height: 1.5;
         }
-        
-        .container {
-            max-width: 1000px;
+
+        .page {
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
+            padding: 24px 20px 48px;
         }
-        
-        .header {
-            background: #2c3e50;
-            color: white;
-            padding: 30px;
-            text-align: center;
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
         }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; }
         }
-        
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.18), rgba(0, 206, 201, 0.08));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow);
         }
-        
-        .content {
-            padding: 30px;
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 206, 201, 0.12);
+            color: var(--accent-2);
+            border: 1px solid rgba(0, 206, 201, 0.25);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: var(--muted);
+            max-width: 640px;
+        }
+
+        .status-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .status-panel h2 {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .status-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface-2);
+            border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+        }
+
+        .status-item strong { font-family: 'JetBrains Mono', monospace; }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .dot.ok { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .dot.warn { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+
+        .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 24px;
         }
-        
-        @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
         }
-        
-        .section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
         }
-        
-        .section h3 {
-            color: #2c3e50;
+
+        .panel h3 {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+
+        .panel .subtitle {
+            color: var(--muted);
+            font-size: 0.92rem;
             margin-bottom: 20px;
-            font-size: 1.4em;
         }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
+
+        .form-group { margin-bottom: 16px; }
+
         label {
             display: block;
             margin-bottom: 8px;
+            font-size: 0.9rem;
             font-weight: 600;
-            color: #495057;
+            color: #c7d0e5;
         }
-        
+
         input, textarea, select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        
+
         input:focus, textarea:focus, select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
         }
-        
-        textarea {
-            min-height: 100px;
-            resize: vertical;
+
+        textarea { min-height: 110px; resize: vertical; }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
-        
+
+        @media (max-width: 600px) {
+            .row { grid-template-columns: 1fr; }
+        }
+
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
             width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s, opacity 0.15s;
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .results {
-            margin-top: 20px;
-        }
-        
-        .user-card {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .user-card h4 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .similarity {
-            display: inline-block;
-            background: #28a745;
+
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #8e7cf8);
             color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #0984e3, var(--accent-2));
+            color: white;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
             margin-top: 10px;
         }
-        
-        .stats {
-            background: #e8f5e8;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .example-btn {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            margin: 2px;
-            border-radius: 4px;
+
+        .chip {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
             cursor: pointer;
-            font-size: 12px;
         }
-        
-        .example-btn:hover {
-            background: #5a6268;
+
+        .chip:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-row input[type="range"] { flex: 1; }
+
+        .results { margin-top: 20px; }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .user-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+
+        .user-card-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .user-card h4 { font-size: 1.05rem; }
+
+        .game-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-2);
+            background: rgba(0, 206, 201, 0.1);
+            border: 1px solid rgba(0, 206, 201, 0.2);
+            padding: 4px 8px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .user-card p {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .score-bar {
+            margin-top: 14px;
+            height: 8px;
+            background: #0f1422;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            border-radius: 999px;
+        }
+
+        .score-label {
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-2);
+        }
+
+        .message {
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 0.92rem;
+        }
+
+        .message.loading {
+            background: rgba(108, 92, 231, 0.12);
+            border: 1px solid rgba(108, 92, 231, 0.25);
+            color: #c7bcff;
+        }
+
+        .message.error {
+            background: rgba(255, 118, 117, 0.12);
+            border: 1px solid rgba(255, 118, 117, 0.25);
+            color: #ffb3b2;
+        }
+
+        .message.empty {
+            background: rgba(253, 203, 110, 0.1);
+            border: 1px solid rgba(253, 203, 110, 0.25);
+            color: #ffe6a8;
+        }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: all 0.25s;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎮 Teammate Finder</h1>
-            <p>Найди идеальных тиммейтов по стилю игры</p>
-        </div>
-        
-        <div class="content">
-            <!-- Левая колонка - Добавление пользователя -->
-            <div class="section">
-                <h3>➕ Добавить профиль</h3>
-                <div class="form-group">
-                    <label for="user_id">ID пользователя:</label>
-                    <input type="text" id="user_id" placeholder="player123">
-                </div>
-                
-                <div class="form-group">
-                    <label for="username">Имя пользователя:</label>
-                    <input type="text" id="username" placeholder="CoolPlayer">
-                </div>
-                
-                <div class="form-group">
-                    <label for="game_type">Тип игры:</label>
-                    <select id="game_type">
-                        <option value="dota2">Dota 2</option>
-                        <option value="csgo">CS:GO</option>
-                        <option value="lol">League of Legends</option>
-                        <option value="valorant">Valorant</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Описание стиля игры:</label>
-                    <textarea id="description" placeholder="Опишите ваш стиль игры, предпочтения, сильные стороны..."></textarea>
-                </div>
-                
-                <button class="btn" onclick="addUser()">➕ Добавить профиль</button>
-                
-                <div class="stats" id="stats">
-                    <strong>📊 Статистика системы:</strong><br>
-                    Загрузка...
-                </div>
+    <div class="page">
+        <section class="hero">
+            <div class="hero-card">
+                <div class="badge">LSTM + Attention · игровой сленг</div>
+                <h1>Нейросетевая система семантического матчмейкинга</h1>
+                <p>
+                    Поиск идеального тиммейта по текстовому описанию стиля игры.
+                    Собственная модель обучена на размеченном датасете с геймерским сленгом
+                    (Dota 2, CS, Valorant) и вашим препроцессором нормализации терминов.
+                </p>
             </div>
-            
-            <!-- Правая колонка - Поиск -->
-            <div class="section">
-                <h3>🔍 Поиск тиммейтов</h3>
-                
-                <div class="form-group">
-                    <label for="search_description">Опишите желаемого тиммейта:</label>
-                    <textarea id="search_description" placeholder="Например: Ищу агрессивного игрока для атаки..."></textarea>
-                    <div style="margin-top: 10px;">
-                        <strong>Примеры:</strong><br>
-                        <button class="example-btn" onclick="setExample(0)">Агрессивный</button>
-                        <button class="example-btn" onclick="setExample(1)">Саппорт</button>
-                        <button class="example-btn" onclick="setExample(2)">Стратег</button>
+
+            <aside class="status-panel">
+                <h2>Состояние системы</h2>
+                <div class="status-grid" id="status-grid">
+                    <div class="status-item"><span>Загрузка...</span><strong>—</strong></div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="grid">
+            <div class="panel">
+                <h3>Создать профиль</h3>
+                <p class="subtitle">Добавьте описание в свободной форме — можно использовать сленг: «сапаю», «агр», «фармлю»</p>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="user_id">ID игрока</label>
+                        <input type="text" id="user_id" placeholder="player_001">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Никнейм</label>
+                        <input type="text" id="username" placeholder="NightCarry">
                     </div>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="top_k">Количество результатов: <span id="top_k_value">5</span></label>
-                    <input type="range" id="top_k" min="1" max="10" value="5" oninput="document.getElementById('top_k_value').textContent = this.value">
+                    <label for="game_type">Игра</label>
+                    <select id="game_type">
+                        <option value="dota2">Dota 2</option>
+                        <option value="csgo">CS:GO / CS2</option>
+                        <option value="valorant">Valorant</option>
+                        <option value="lol">League of Legends</option>
+                        <option value="general">Другое</option>
+                    </select>
                 </div>
-                
-                <button class="btn" onclick="searchTeammates()">🔍 Найти тиммейтов</button>
-                
-                <div class="results" id="results">
-                    <!-- Здесь появятся результаты поиска -->
+
+                <div class="form-group">
+                    <label for="description">Описание стиля</label>
+                    <textarea id="description" placeholder="Например: агр сап, давлю лайн, роамлю и помогаю керри фармить"></textarea>
                 </div>
+
+                <button class="btn btn-primary" onclick="addUser()">Сохранить профиль</button>
             </div>
-        </div>
+
+            <div class="panel">
+                <h3>Найти тиммейта</h3>
+                <p class="subtitle">Опишите, кого ищете — система сравнит семантику через собственные эмбеддинги</p>
+
+                <div class="form-group">
+                    <label for="search_description">Запрос</label>
+                    <textarea id="search_description" placeholder="Ищу спокойного саппорта, который варды ставит и не тильтует"></textarea>
+                    <div class="chips">
+                        <button class="chip" onclick="setExample(0)">Агр-керри</button>
+                        <button class="chip" onclick="setExample(1)">Саппорт</button>
+                        <button class="chip" onclick="setExample(2)">IGL / тактик</button>
+                        <button class="chip" onclick="setExample(3)">Сленг: «сапаю, хилю»</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="search_game_type">Фильтр по игре</label>
+                        <select id="search_game_type">
+                            <option value="all">Все игры</option>
+                            <option value="dota2">Dota 2</option>
+                            <option value="csgo">CS:GO / CS2</option>
+                            <option value="valorant">Valorant</option>
+                            <option value="lol">League of Legends</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Результатов: <span id="top_k_value">5</span></label>
+                        <div class="slider-row">
+                            <input type="range" id="top_k" min="1" max="10" value="5"
+                                   oninput="document.getElementById('top_k_value').textContent = this.value">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Порог совместимости: <span id="threshold_value">0.35</span></label>
+                    <div class="slider-row">
+                        <input type="range" id="similarity_threshold" min="10" max="90" value="35"
+                               oninput="document.getElementById('threshold_value').textContent = (this.value / 100).toFixed(2)">
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="searchTeammates()">Запустить поиск</button>
+
+                <div class="results" id="results"></div>
+            </div>
+        </section>
     </div>
+
+    <div class="toast" id="toast"></div>
 
     <script>
         const API_URL = 'http://localhost:8000';
         const examples = [
-            "Ищу агрессивного игрока для атаки и давления на врага",
-            "Нужен спокойный саппорт для помощи команде и контроля карты", 
-            "Ищу стратегического игрока для тактической игры и анализа"
+            'Ищу агрессивного керри, который с ранней игры давит и не боится драться',
+            'Нужен саппорт: варды, сейвы, спокойная игра без токсика',
+            'Ищу IGL или тактического игрока, который ведёт команду и делает коллы',
+            'Сапаю, хилю, агр не мой стиль — нужен керри, который фармит и не тильтует'
         ];
-        
-        // Загружаем статистику при запуске
-        loadStats();
-        
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSystemStatus();
+            loadStats();
+        });
+
         function setExample(index) {
             document.getElementById('search_description').value = examples[index];
         }
-        
-        async function loadStats() {
+
+        function showToast(text, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = text;
+            toast.style.borderColor = isError ? 'rgba(255,118,117,0.4)' : 'var(--border)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2800);
+        }
+
+        async function loadSystemStatus() {
+            const grid = document.getElementById('status-grid');
             try {
-                const response = await fetch(`${API_URL}/stats`);
-                const stats = await response.json();
-                document.getElementById('stats').innerHTML = `
-                    <strong>📊 Статистика системы:</strong><br>
-                    👥 Пользователей: ${stats.total_users}<br>
-                    ${Object.entries(stats.users_by_game_type || {}).map(([game, count]) => 
-                        `🎮 ${game}: ${count}`).join('<br>')}
+                const [health, model] = await Promise.all([
+                    fetch(`${API_URL}/health`).then(r => r.json()),
+                    fetch(`${API_URL}/model/info`).then(r => r.json())
+                ]);
+
+                grid.innerHTML = `
+                    <div class="status-item">
+                        <span><span class="dot ${health.model_loaded ? 'ok' : 'warn'}"></span>Модель</span>
+                        <strong>${health.model_loaded ? 'загружена' : 'не обучена'}</strong>
+                    </div>
+                    <div class="status-item">
+                        <span>Архитектура</span>
+                        <strong>${model.architecture || 'LSTM'}</strong>
+                    </div>
+                    <div class="status-item">
+                        <span>Размерность</span>
+                        <strong>${model.embedding_dim || 128}</strong>
+                    </div>
+                    <div class="status-item">
+                        <span>Словарь</span>
+                        <strong>${model.vocab_size || 0} слов</strong>
+                    </div>
+                    <div class="status-item">
+                        <span>Пользователей</span>
+                        <strong id="users-count">—</strong>
+                    </div>
                 `;
-            } catch (error) {
-                document.getElementById('stats').innerHTML = '❌ Ошибка загрузки статистики';
+            } catch (e) {
+                grid.innerHTML = `<div class="message error">API недоступен. Запустите: <code>uvicorn api.main:app --reload</code></div>`;
             }
         }
-        
+
+        async function loadStats() {
+            try {
+                const stats = await fetch(`${API_URL}/stats`).then(r => r.json());
+                const el = document.getElementById('users-count');
+                if (el) el.textContent = stats.total_users;
+            } catch (e) {}
+        }
+
         async function addUser() {
             const userData = {
-                user_id: document.getElementById('user_id').value,
-                username: document.getElementById('username').value,
-                description: document.getElementById('description').value,
+                user_id: document.getElementById('user_id').value.trim(),
+                username: document.getElementById('username').value.trim(),
+                description: document.getElementById('description').value.trim(),
                 game_type: document.getElementById('game_type').value
             };
-            
+
             if (!userData.user_id || !userData.description) {
-                alert('⚠️ Заполните обязательные поля: ID пользователя и описание');
+                showToast('Заполните ID и описание', true);
                 return;
             }
-            
+
             try {
                 const response = await fetch(`${API_URL}/users`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userData)
                 });
-                
+
                 if (response.ok) {
-                    alert('✅ Пользователь успешно добавлен!');
-                    // Очищаем форму
+                    showToast('Профиль сохранён');
                     document.getElementById('user_id').value = '';
                     document.getElementById('username').value = '';
                     document.getElementById('description').value = '';
-                    // Обновляем статистику
                     loadStats();
+                    loadSystemStatus();
                 } else {
                     const error = await response.json();
-                    alert(`❌ Ошибка: ${error.detail}`);
+                    showToast(error.detail || 'Ошибка сохранения', true);
                 }
-            } catch (error) {
-                alert('❌ Ошибка соединения с сервером');
+            } catch (e) {
+                showToast('Нет соединения с API', true);
             }
         }
-        
+
         async function searchTeammates() {
-            const searchData = {
-                description: document.getElementById('search_description').value,
-                top_k: parseInt(document.getElementById('top_k').value)
-            };
-            
-            if (!searchData.description) {
-                alert('⚠️ Введите описание для поиска');
+            const description = document.getElementById('search_description').value.trim();
+            const gameType = document.getElementById('search_game_type').value;
+            const topK = parseInt(document.getElementById('top_k').value, 10);
+            const threshold = parseInt(document.getElementById('similarity_threshold').value, 10) / 100;
+
+            if (!description) {
+                showToast('Введите описание для поиска', true);
                 return;
             }
-            
+
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '<div class="loading">⏳ Ищем тиммейтов...</div>';
-            
+            resultsDiv.innerHTML = '<div class="message loading">Анализируем семантику запроса...</div>';
+
+            const payload = { description, top_k: topK, similarity_threshold: threshold };
+            if (gameType !== 'all') payload.game_type = gameType;
+
             try {
                 const response = await fetch(`${API_URL}/similarity/search`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(searchData)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
-                
-                if (!response.ok) {
-                    throw new Error('Ошибка сервера');
-                }
-                
+
+                if (!response.ok) throw new Error('Ошибка сервера');
                 const users = await response.json();
                 displayResults(users);
-            } catch (error) {
-                resultsDiv.innerHTML = `<div class="error">❌ Ошибка поиска: ${error.message}</div>`;
+            } catch (e) {
+                resultsDiv.innerHTML = `<div class="message error">Ошибка поиска: ${e.message}</div>`;
             }
         }
-        
+
         function displayResults(users) {
             const resultsDiv = document.getElementById('results');
-            
-            if (users.length === 0) {
-                resultsDiv.innerHTML = '<div class="error">😞 Тиммейты не найдены. Попробуйте изменить описание.</div>';
+
+            if (!users.length) {
+                resultsDiv.innerHTML = '<div class="message empty">Никого не нашли. Понизьте порог или добавьте больше профилей.</div>';
                 return;
             }
-            
+
             resultsDiv.innerHTML = `
-                <h4>🎯 Найдено тиммейтов: ${users.length}</h4>
-                ${users.map(user => `
-                    <div class="user-card">
-                        <h4>${user.username || 'Анонимный игрок'}</h4>
-                        <p><strong>ID:</strong> ${user.user_id}</p>
-                        <p><strong>Описание:</strong> "${user.description}"</p>
-                        <p><strong>Игра:</strong> ${user.game_type}</p>
-                        <span class="similarity">Совпадение: ${(user.similarity_score * 100).toFixed(1)}%</span>
-                    </div>
-                `).join('')}
+                <div class="result-header">
+                    <strong>Найдено: ${users.length}</strong>
+                    <span style="color: var(--muted); font-size: 0.85rem;">сортировка по совместимости</span>
+                </div>
+                ${users.map(user => {
+                    const pct = (user.similarity_score * 100).toFixed(1);
+                    return `
+                        <article class="user-card">
+                            <div class="user-card-top">
+                                <h4>${user.username || 'Игрок'}</h4>
+                                <span class="game-tag">${user.game_type}</span>
+                            </div>
+                            <p><strong>ID:</strong> ${user.user_id}</p>
+                            <p style="margin-top: 8px;">${user.description}</p>
+                            <div class="score-bar"><div class="score-fill" style="width: ${pct}%"></div></div>
+                            <div class="score-label">Совместимость: ${pct}%</div>
+                        </article>
+                    `;
+                }).join('')}
             `;
         }
     </script>

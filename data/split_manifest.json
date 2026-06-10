@@ -1,0 +1,20 @@
+{
+  "source": "C:\\Users\\User\\Desktop\\temmate_finder_project\\data\\gaming_compatibility_dataset.csv",
+  "train_file": "C:\\Users\\User\\Desktop\\temmate_finder_project\\data\\train.csv",
+  "test_file": "C:\\Users\\User\\Desktop\\temmate_finder_project\\data\\test.csv",
+  "test_ratio": 0.2,
+  "seed": 42,
+  "total_pairs": 53,
+  "train_pairs": 42,
+  "test_pairs": 11,
+  "train_buckets": {
+    "compatible": 36,
+    "incompatible": 6
+  },
+  "test_buckets": {
+    "compatible": 9,
+    "incompatible": 1,
+    "neutral": 1
+  },
+  "note": "Модель обучается только на train.csv; метрики считаются на test.csv"
+}

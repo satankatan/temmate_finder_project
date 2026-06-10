@@ -28,6 +28,7 @@ class TextEmbeddingModel(nn.Module):
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
         self.vocab_size = vocab_size
+        self.output_dim = output_dim
         
         # Слой эмбеддингов
         self.embedding = nn.Embedding(
